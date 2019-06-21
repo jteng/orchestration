@@ -48,6 +48,10 @@ func (h *CustomerAccountHandler) ServeHTTP(w http.ResponseWriter, r *http.Reques
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+	if res.StatusCode == http.StatusNotFound {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 	contents, err := ioutil.ReadAll(res.Body)
 	var account orchestration.Account
 	err = json.Unmarshal(contents, &account)
@@ -64,6 +68,10 @@ func (h *CustomerAccountHandler) ServeHTTP(w http.ResponseWriter, r *http.Reques
 	res, err = htclient.Do(req)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if res.StatusCode == http.StatusNotFound {
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 	contents, err = ioutil.ReadAll(res.Body)
